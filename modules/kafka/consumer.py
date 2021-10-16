@@ -15,7 +15,7 @@ consumer = KafkaConsumer(TOPIC_NAME, bootstrap_servers=[KAFKA_SERVER], value_des
 
 
 channel = grpc.insecure_channel("udaconnect-grpc:5005")
-stub = apis_pb2_grpc.PostRequestProcessingServiceStub(channel)
+stub = apis_pb2_grpc.ApiServiceStub(channel)
 
 for message in consumer:
     json_message=eval(json.loads((message.value)))
