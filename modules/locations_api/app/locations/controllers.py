@@ -5,7 +5,7 @@ from app.locations.schemas import (
     LocationSchema,
 )
 from app.locations.services import LocationService
-from flask import request
+from flask import request, Response
 from flask_accepts import accepts, responds
 from flask_restx import Namespace, Resource
 
@@ -25,8 +25,8 @@ class LocationResource(Resource):
     @responds(schema=LocationSchema)
     def post(self) -> Location:
         request.get_json()
-        location: Location = LocationService.create(request.get_json())
-        return location
+        LocationService.create_message_kafka_queue(request.get_json())
+        return Response(status=202)
 
     @responds(schema=LocationSchema)
     def get(self, location_id) -> Location:
