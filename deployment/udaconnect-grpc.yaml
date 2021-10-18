@@ -9,7 +9,7 @@ spec:
   - name: "5005"
     port: 5005
     targetPort: 5005
-    nodePort: 30007
+    nodePort: 30005
   selector:
     service: udaconnect-grpc
   type: NodePort
