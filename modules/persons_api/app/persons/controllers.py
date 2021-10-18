@@ -5,7 +5,7 @@ from app.persons.schemas import (
     PersonSchema,
 )
 from app.persons.services import PersonService
-from flask import request
+from flask import request, Response
 from flask_accepts import accepts, responds
 from flask_restx import Namespace, Resource
 from typing import List
@@ -23,8 +23,8 @@ class PersonsResource(Resource):
     @responds(schema=PersonSchema)
     def post(self) -> Person:
         payload = request.get_json()
-        new_person: Person = PersonService.create(payload)
-        return new_person
+        PersonService.push_person_into_queue(payload)
+        return Response(status=202)
 
     @responds(schema=PersonSchema, many=True)
     def get(self) -> List[Person]:

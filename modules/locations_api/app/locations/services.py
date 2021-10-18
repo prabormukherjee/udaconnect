@@ -7,6 +7,7 @@ from app.locations.models import Location
 from app.locations.schemas import LocationSchema
 from geoalchemy2.functions import ST_AsText, ST_Point
 from sqlalchemy.sql import text
+from kafka import KafkaProducer
 
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger("locations-api")
@@ -39,3 +40,15 @@ class LocationService:
         db.session.commit()
 
         return new_location
+
+    @staticmethod
+    def create_message_kafka_queue(location: Dict) -> Location:
+        validation_results: Dict = LocationSchema().validate(location)
+        if validation_results:
+            logger.warning(f"Data received in unknown format: {validation_results}")
+            raise Exception(f"Unknown data: {validation_results}")
+        TOPIC_NAME = 'location_api'
+        KAFKA_SERVER = 'my-release-kafka-0.my-release-kafka-headless.default.svc.cluster.local:9092'
+        location_producer = KafkaProducer(bootstrap_servers=KAFKA_SERVER)
+        location_producer.send(TOPIC_NAME, bytes(str(location), 'utf-8'))
+        location_producer.flush()
