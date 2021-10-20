@@ -40,7 +40,7 @@ class PersonService:
             raise Exception(f"Unknown data: {validation_results}")
 
         TOPIC_NAME = 'person_api'
-        KAFKA_SERVER = 'my-release-kafka-0.my-release-kafka-headless.default.svc.cluster.local:9092'
+        KAFKA_SERVER = 'kafka:9092'
         location_producer = KafkaProducer(bootstrap_servers=KAFKA_SERVER)
         location_producer.send(TOPIC_NAME, bytes(str(person), 'utf-8'))
         location_producer.flush()
