@@ -42,7 +42,7 @@ class LocationService:
         return new_location
 
     @staticmethod
-    def create_message_kafka_queue(location: Dict) -> Location:
+    def create_location_kafka_queue(location: Dict) -> Location:
         validation_results: Dict = LocationSchema().validate(location)
         if validation_results:
             logger.warning(f"Data received in unknown format: {validation_results}")
