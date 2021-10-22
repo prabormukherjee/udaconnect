@@ -33,14 +33,14 @@ class PersonService:
         return db.session.query(Person).all()
 
     @staticmethod
-    def create_message_kafka_queue(person: Dict) -> Person:
+    def create_person_kafka_queue(person: Dict) -> Person:
         validation_results: Dict = PersonSchema().validate(person)
         if validation_results:
             logger.warning(f"Data received in unknown format: {validation_results}")
             raise Exception(f"Unknown data: {validation_results}")
 
         TOPIC_NAME = 'person_api'
-        KAFKA_SERVER = 'my-release-kafka-0.my-release-kafka-headless.default.svc.cluster.local:9092'
-        location_producer = KafkaProducer(bootstrap_servers=KAFKA_SERVER)
-        location_producer.send(TOPIC_NAME, bytes(str(person), 'utf-8'))
-        location_producer.flush()
+        KAFKA_SERVER = 'kafka:9092'
+        person_producer = KafkaProducer(bootstrap_servers=KAFKA_SERVER)
+        person_producer.send(TOPIC_NAME, bytes(str(person), 'utf-8'))
+        person_producer.flush()

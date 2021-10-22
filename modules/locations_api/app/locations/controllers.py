@@ -25,7 +25,7 @@ class LocationResource(Resource):
     @responds(schema=LocationSchema)
     def post(self) -> Location:
         request.get_json()
-        LocationService.create_message_kafka_queue(request.get_json())
+        LocationService.create_location_kafka_queue(request.get_json())
         return Response(status=202)
 
     @responds(schema=LocationSchema)

@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("kafka-consumer")
 
 TOPIC_NAME = 'person_api'
-KAFKA_SERVER = 'my-release-kafka-0.my-release-kafka-headless.default.svc.cluster.local:9092'
+KAFKA_SERVER = 'kafka:9092'
 
 consumer = KafkaConsumer(TOPIC_NAME, bootstrap_servers=[KAFKA_SERVER], value_deserializer=lambda m: json.dumps(m.decode('utf-8')))
 

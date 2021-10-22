@@ -23,7 +23,7 @@ class PersonsResource(Resource):
     @responds(schema=PersonSchema)
     def post(self) -> Person:
         payload = request.get_json()
-        PersonService.push_person_into_queue(payload)
+        PersonService.create_person_kafka_queue(payload)
         return Response(status=202)
 
     @responds(schema=PersonSchema, many=True)
