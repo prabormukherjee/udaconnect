@@ -103,7 +103,49 @@ $ helm repo add bitnami https://charts.bitnami.com/bitnami
 $ helm install my-release bitnami/kafka
 ```
 
-For more details and issue, you can follow [this](./docs/Kafka.md)
+For more details, you can follow [this](https://docs.bitnami.com/tutorials/deploy-scalable-kafka-zookeeper-cluster-kubernetes) tutorial. But different version can behave differently. So alternatively you deploy kafka from a `yaml` file. Copy this in your terminal
+
+```bash
+$ helm template kafka bitnami/kafka \
+     --set volumePermissions.enabled=true \
+     --set zookeeper.volumePermissions.enabled=true \
+     --set zookeeperConnectionTimeoutMs=10000 \
+     > kafka.yaml
+```
+
+Now deploy this with `kubectl apply -f kafka.yaml`. Now you can check `kubectl get pod` and wait for sometime untill both `kafka` and `zookeeper` are in `running` state. It should look something like this:  
+
+```bash
+NAME                     READY   STATUS    RESTARTS AGE 
+kafka-0                  1/1     Running   0        3m41s
+kafka-zookeeper-0        1/1     Running   0        3m41s
+```
+
+You can also use untill both are running.
+
+```bash
+$ kubectl wait pod --timeout 300s --for=condition=Ready \
+       -l app.kubernetes.io/name=kafka
+```
+
+Now create a topic with this
+
+```bash
+$ kubectl exec -it kafka-0 -- kafka-topics.sh \
+       --create --bootstrap-server kafka-headless:9092 \
+       --replication-factor 1 --partitions 1 \ 
+       --topic mytopic
+```
+
+Check the `kubectl get svc` output looks something like this
+
+```bash
+  NAME                          TYPE      CLUSTER-IP      EXTERNAL-IP      PORT(S)                     AGE
+  kafka-zookeeper-headless    ClusterIP     None            <none>      2181/TCP,2888/TCP,3888/TCP     125m
+  kafka-zookeeper             ClusterIP   10.43.79.54       <none>      2181/TCP,2888/TCP,3888/TCP     125m
+  kafka-headless              ClusterIP     None            <none>        9092/TCP,9093/TCP            125m
+  kafka                       ClusterIP   10.43.208.124     <none>        9092/TCP                     125m
+```
 
 ### Steps
 

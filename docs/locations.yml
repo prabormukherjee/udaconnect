@@ -1,0 +1,60 @@
+---
+swagger: '2.0'
+basePath: "/"
+paths:
+  "/api/locations":
+    parameters:
+    - in: query
+      description: Unique ID for a given Location
+      name: location_id
+      type: string
+    post:
+      responses:
+        '200':
+          description: Success
+      operationId: post_location_resource
+      tags:
+      - locations_api
+    get:
+      responses:
+        '200':
+          description: Success
+      operationId: get_location_resource
+      tags:
+      - locations_api
+  "/api/locations/{location_id}":
+    parameters:
+    - in: path
+      description: Unique ID for a given Location
+      name: location_id
+      required: true
+      type: string
+    post:
+      responses:
+        '200':
+          description: Success
+      operationId: post_location_resource
+      tags:
+      - locations_api
+    get:
+      responses:
+        '200':
+          description: Success
+      operationId: get_location_resource
+      tags:
+      - locations_api
+info:
+  title: UdaConnect locations API
+  version: 0.1.0
+produces:
+- application/json
+consumes:
+- application/json
+tags:
+- name: locations_api
+  description: Connections via geolocation.
+responses:
+  ParseError:
+    description: When a mask can't be parsed
+  MaskError:
+    description: When any error occurs on mask
